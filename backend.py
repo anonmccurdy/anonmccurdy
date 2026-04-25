@@ -26,6 +26,23 @@ def send_url():
             base_tag = f'<base href="{url}">'
             content = content.replace('<head>', f'<head>{base_tag}')
         
+        # Inject interceptor script to catch link clicks and send them to parent
+        interceptor = """
+        <script>
+        document.addEventListener('click', e => {
+            const link = e.target.closest('a');
+            if (link && link.href) {
+                e.preventDefault();
+                window.parent.postMessage({type: 'navigate', url: link.href}, '*');
+            }
+        });
+        </script>
+        """
+        if '</body>' in content:
+            content = content.replace('</body>', f'{interceptor}</body>')
+        else:
+            content += interceptor
+        
         return jsonify({'content': content}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
