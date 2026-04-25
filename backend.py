@@ -1,6 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return send_file('frontend.html')
 
 @app.route('/api/send-url', methods=['POST'])
 def send_url():
