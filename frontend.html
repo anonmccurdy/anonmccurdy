@@ -87,7 +87,7 @@
             .then(response => response.json())
             .then(data => {
                 const output = document.getElementById('output');
-                output.innerHTML = data;
+                output.innerHTML = data.content;
                 output.classList.add('show');
                 console.log(data);
             })
