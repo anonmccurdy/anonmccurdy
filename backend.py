@@ -17,8 +17,16 @@ def send_url():
     # Now, the URL will be sent a request, and its content will be fetched and returned as a response.
     try:
         import requests
+        from urllib.parse import urljoin
         response = requests.get(url)
-        return jsonify({'content': response.text}), 200
+        content = response.text
+        
+        # Inject <base> tag to help resolve relative links
+        if '<head>' in content:
+            base_tag = f'<base href="{url}">'
+            content = content.replace('<head>', f'<head>{base_tag}')
+        
+        return jsonify({'content': content}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
